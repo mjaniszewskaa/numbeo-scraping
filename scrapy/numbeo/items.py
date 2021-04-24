@@ -1,12 +1,17 @@
-# Define here the models for your scraped items
-#
-# See documentation in:
-# https://docs.scrapy.org/en/latest/topics/items.html
-
 import scrapy
 
 
-class NumbeoItem(scrapy.Item):
-    # define the fields for your item here like:
-    # name = scrapy.Field()
-    pass
+class Link(scrapy.Item):
+    link = scrapy.Field()
+
+    def __init__(self, link):
+        super(Link, self).__init__()
+        self["link"] = link
+
+
+class Costs(scrapy.Item):
+    city = scrapy.Field()
+    name = scrapy.Field()
+    mid = scrapy.Field()
+    left = scrapy.Field()
+    right = scrapy.Field()
