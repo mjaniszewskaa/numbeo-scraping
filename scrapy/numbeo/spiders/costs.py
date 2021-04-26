@@ -3,7 +3,7 @@ import csv
 import scrapy
 import numbeo.items
 
-url = 'https://www.numbeo.com/cost-of-living/city_result.jsp?country={}&city={}'
+url = 'https://www.numbeo.com/cost-of-living/city_result.jsp?country={}&city={}&displayCurrency=USD'
 
 
 class CostsSpider(scrapy.Spider):
