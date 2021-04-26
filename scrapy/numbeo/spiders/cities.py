@@ -1,6 +1,9 @@
 import re
+import csv
 import scrapy
 import numbeo.items
+
+url = 'https://www.numbeo.com/cost-of-living/country_result.jsp?country={}'
 
 
 def sanitize(input):
@@ -10,10 +13,11 @@ def sanitize(input):
 class CitiesSpider(scrapy.Spider):
     name = 'cities'
 
-    def __init__(self, input, limit=False, max_size=100, **kwargs):
+    def __init__(self, limit=True, max_size=100, **kwargs):
         try:
-            with open(input, "rt") as f:
-                self.start_urls = [url.strip() for url in f.readlines()[1:]]
+            with open('countries.csv', 'rt') as f:
+                entries = list(csv.reader(f))[1:]
+            self.start_urls = [url.format(*entry) for entry in entries]
         except:
             self.start_urls = []
         if limit:
@@ -23,8 +27,6 @@ class CitiesSpider(scrapy.Spider):
     def parse(self, response):
         xpath = '//*[@id="city"]/option//@value'
         selection = response.xpath(xpath)
-        country = response.request.url[response.request.url.find('=') + 1:]
         for s in selection:
-            city = "https://www.numbeo.com/cost-of-living/in/" + s.get()
-            yield numbeo.items.Link(sanitize(city))
-            yield numbeo.items.Link(sanitize(f'{city}-{country}'))
+            country = response.request.url.split('=')[-1]
+            yield numbeo.items.City(country, s.get())

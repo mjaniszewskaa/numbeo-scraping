@@ -1,19 +1,23 @@
 import re
+import csv
 import scrapy
 import numbeo.items
+
+url = 'https://www.numbeo.com/cost-of-living/city_result.jsp?country={}&city={}'
 
 
 class CostsSpider(scrapy.Spider):
     name = 'costs'
 
-    def __init__(self, input, limit=False, max_size=100, **kwargs):
+    def __init__(self, limit=True, max_size=100, **kwargs):
         try:
-            with open(input, "rt") as f:
-                self.start_urls = [url.strip() for url in f.readlines()[1:]]
+            with open('cities.csv', 'rt') as f:
+                entries = list(csv.reader(f))[1:]
+            self.start_urls = [url.format(*entry) for entry in entries]
         except:
             self.start_urls = []
         if limit:
-            self.start_urls = self.start_urls[:2*max_size]
+            self.start_urls = self.start_urls[:max_size]
         super().__init__(**kwargs)
 
     def parse(self, response):
@@ -22,19 +26,15 @@ class CostsSpider(scrapy.Spider):
         for row in selection:
             costs = numbeo.items.Costs()
             if row.xpath('td'):
-                url = response.request.url
-                costs['city'] = re.findall('/in/(.*)', url)[0].strip()
+                costs['city'] = response.request.url.split("/")[-1]
                 costs['name'] = row.xpath('td/text()').get().strip()
                 costs['mid'] = row.xpath(
                     'td/span/text()').get().replace('$', '').strip()
-                try:
-                    costs['left'] = row.xpath(
-                        'td/span[@class="barTextLeft"]/text()').get().strip()
-                except:
-                    costs['left'] = 'NaN'
-                try:
-                    costs['right'] = row.xpath(
-                        'td/span[@class="barTextRight"]/text()').get().strip()
-                except:
-                    costs['right'] = 'NaN'
+                directions = ['left', 'right']
+                for d in directions:
+                    xpath = f'td/span[@class="barText{d.capitalize()}"]/text()'
+                    try:
+                        costs[d] = row.xpath(xpath).get().strip()
+                    except:
+                        costs[d] = 'NaN'
                 yield costs

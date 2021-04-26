@@ -10,7 +10,7 @@ class CountriesSpider(scrapy.Spider):
         super().__init__(**kwargs)
 
     def parse(self, response):
-        xpath = '//html/body/div[2]/div[6]/table//@href'
+        xpath = '//html/body/div[2]/div[6]/table//a/text()'
         selection = response.xpath(xpath)
         for s in selection:
-            yield numbeo.items.Link(self.start_urls[0] + s.get())
+            yield numbeo.items.Country(s.get())
