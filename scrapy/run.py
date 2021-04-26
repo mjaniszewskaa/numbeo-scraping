@@ -1,6 +1,7 @@
 #!python3
 
 import os
+import time
 import contextlib
 import scrapy.crawler
 import twisted.internet
@@ -33,4 +34,10 @@ def crawl():
 
 if __name__ == '__main__':
     crawl()
+
+    start = time.time()
     twisted.internet.reactor.run()
+    end = time.time()
+
+    duration = '{:.2f}'.format(end - start)
+    print(f'Elapsed time: {duration}s.')
