@@ -24,9 +24,8 @@ class CostsSpider(scrapy.Spider):
         selection = response.xpath(xpath)
         for row in filter(lambda row: row.xpath('td'), selection):
             costs = numbeo.items.Costs()
-            location = '//html/body/div[2]//span[@itemprop="name"]/text()'
-            costs['Country'] = response.xpath(location)[1].get().strip()
-            costs['City'] = response.xpath(location)[2].get().strip()
+            loc = response.xpath('//span[@itemprop="name"]/text()')[1:]
+            costs['Country'], costs['City'] = [l.get().strip() for l in loc]
             costs['Name'] = row.xpath('td/text()').get().strip()
             costs['Mid'] = row.xpath('td/span/text()').get().strip('$').strip()
             for bound in ['Left', 'Right']:

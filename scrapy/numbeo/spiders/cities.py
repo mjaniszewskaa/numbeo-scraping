@@ -23,5 +23,5 @@ class CitiesSpider(scrapy.Spider):
         xpath = '//*[@id="city"]/option//@value'
         selection = response.xpath(xpath)
         for s in selection:
-            country = response.request.url.split('=')[-1]
-            yield numbeo.items.City(country, s.get())
+            country = response.xpath('//span[@itemprop="name"]/text()')[1]
+            yield numbeo.items.City(country.get(), s.get())
