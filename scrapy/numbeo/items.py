@@ -2,26 +2,27 @@ import scrapy
 
 
 class Country(scrapy.Item):
-    country = scrapy.Field()
+    Country = scrapy.Field()
 
     def __init__(self, country):
         super(Country, self).__init__()
-        self['country'] = country
+        self['Country'] = country
 
 
 class City(scrapy.Item):
-    country = scrapy.Field()
-    city = scrapy.Field()
+    Country = scrapy.Field()
+    City = scrapy.Field()
 
     def __init__(self, country, city):
         super(City, self).__init__()
-        self['country'] = country
-        self['city'] = city
+        self['Country'] = country
+        self['City'] = city
 
 
 class Costs(scrapy.Item):
-    city = scrapy.Field()
-    name = scrapy.Field()
-    mid = scrapy.Field()
-    left = scrapy.Field()
-    right = scrapy.Field()
+    Country = scrapy.Field()
+    City = scrapy.Field()
+    Name = scrapy.Field()
+    Mid = scrapy.Field()
+    Left = scrapy.Field()
+    Right = scrapy.Field()

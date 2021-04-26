@@ -1,13 +1,8 @@
-import re
 import csv
 import scrapy
 import numbeo.items
 
 url = 'https://www.numbeo.com/cost-of-living/country_result.jsp?country={}'
-
-
-def sanitize(input):
-    return re.sub('[(),]', '', re.sub('[ +]', '-', input))
 
 
 class CitiesSpider(scrapy.Spider):

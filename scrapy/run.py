@@ -24,9 +24,9 @@ def crawl():
             os.remove(f'{spider}.{format}')
         settings['FEEDS'] = {f'{spider}.{format}': {'format': format}}
         settings['FEED_EXPORT_FIELDS'] = {
-            'countries': ['country'],
-            'cities': ['country', 'city'],
-            'costs': ['city', 'name', 'mid', 'left', 'right'],
+            'countries': ['Country'],
+            'cities': ['Country', 'City'],
+            'costs': ['Country', 'City', 'Name', 'Mid', 'Left', 'Right'],
         }[spider]
         yield runner.crawl(spider, limit=limit, max_size=max_size)
     twisted.internet.reactor.stop()

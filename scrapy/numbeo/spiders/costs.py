@@ -1,4 +1,3 @@
-import re
 import csv
 import scrapy
 import numbeo.items
@@ -23,18 +22,17 @@ class CostsSpider(scrapy.Spider):
     def parse(self, response):
         xpath = '//html/body/div[2]/table//tr'
         selection = response.xpath(xpath)
-        for row in selection:
+        for row in filter(lambda row: row.xpath('td'), selection):
             costs = numbeo.items.Costs()
-            if row.xpath('td'):
-                costs['city'] = response.request.url.split("/")[-1]
-                costs['name'] = row.xpath('td/text()').get().strip()
-                costs['mid'] = row.xpath(
-                    'td/span/text()').get().replace('$', '').strip()
-                directions = ['left', 'right']
-                for d in directions:
-                    xpath = f'td/span[@class="barText{d.capitalize()}"]/text()'
-                    try:
-                        costs[d] = row.xpath(xpath).get().strip()
-                    except:
-                        costs[d] = 'NaN'
-                yield costs
+            location = '//html/body/div[2]//span[@itemprop="name"]/text()'
+            costs['Country'] = response.xpath(location)[1].get().strip()
+            costs['City'] = response.xpath(location)[2].get().strip()
+            costs['Name'] = row.xpath('td/text()').get().strip()
+            costs['Mid'] = row.xpath('td/span/text()').get().strip('$').strip()
+            for bound in ['Left', 'Right']:
+                xpath = f'td/span[@class="barText{bound}"]/text()'
+                try:
+                    costs[bound] = row.xpath(xpath).get().strip()
+                except:
+                    costs[bound] = 'NaN'
+            yield costs
