@@ -23,7 +23,6 @@ class PricesSpider(scrapy.Spider):
         xpath = '//html/body/div[2]/table//tr'
         selection = response.xpath(xpath)
         loc = response.xpath('//span[@itemprop="name"]/text()')[1:]
-        print(response.request.url)
         for row in filter(lambda row: row.xpath('td'), selection):
             prices = numbeo.items.Prices()
             prices['Country'], prices['City'] = [l.get().strip() for l in loc]
