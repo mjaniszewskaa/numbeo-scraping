@@ -19,14 +19,14 @@ runner = scrapy.crawler.CrawlerRunner(settings)
 
 @twisted.internet.defer.inlineCallbacks
 def crawl():
-    for spider in ['countries', 'cities', 'costs']:
+    for spider in ['countries', 'cities', 'prices']:
         with contextlib.suppress(FileNotFoundError):
             os.remove(f'{spider}.{format}')
         settings['FEEDS'] = {f'{spider}.{format}': {'format': format}}
         settings['FEED_EXPORT_FIELDS'] = {
             'countries': ['Country'],
             'cities': ['Country', 'City'],
-            'costs': ['Country', 'City', 'Name', 'Mid', 'Left', 'Right'],
+            'prices': ['Country', 'City', 'Name', 'Price', 'Min', 'Max'],
         }[spider]
         yield runner.crawl(spider, limit=limit, max_size=max_size)
     twisted.internet.reactor.stop()

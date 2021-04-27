@@ -19,10 +19,10 @@ class City(scrapy.Item):
         self['City'] = city
 
 
-class Costs(scrapy.Item):
+class Prices(scrapy.Item):
     Country = scrapy.Field()
     City = scrapy.Field()
     Name = scrapy.Field()
-    Mid = scrapy.Field()
-    Left = scrapy.Field()
-    Right = scrapy.Field()
+    Price = scrapy.Field()
+    Min = scrapy.Field()
+    Max = scrapy.Field()
