@@ -22,17 +22,21 @@ class PricesSpider(scrapy.Spider):
     def parse(self, response):
         xpath = '//html/body/div[2]/table//tr'
         selection = response.xpath(xpath)
+        loc = response.xpath('//span[@itemprop="name"]/text()')[1:]
+        print(response.request.url)
         for row in filter(lambda row: row.xpath('td'), selection):
-            costs = numbeo.items.Prices()
-            loc = response.xpath('//span[@itemprop="name"]/text()')[1:]
-            costs['Country'], costs['City'] = [l.get().strip() for l in loc]
-            costs['Name'] = row.xpath('td/text()').get().strip()
-            costs['Price'] = row.xpath(
-                'td/span/text()').get().strip('$').strip()
+            prices = numbeo.items.Prices()
+            prices['Country'], prices['City'] = [l.get().strip() for l in loc]
+            prices['Name'] = row.xpath('td/text()').get().strip()
+            try:
+                xpath = 'td/span/text()'
+                prices['Price'] = row.xpath(xpath).get().strip('$').strip()
+            except:
+                prices['Price'] = 'NaN'
             for name, bound in zip(['Min', 'Max'], ['Left', 'Right']):
                 xpath = f'td/span[@class="barText{bound}"]/text()'
                 try:
-                    costs[name] = row.xpath(xpath).get().strip()
+                    prices[name] = row.xpath(xpath).get().strip()
                 except:
-                    costs[name] = 'NaN'
-            yield costs
+                    prices[name] = 'NaN'
+            yield prices
