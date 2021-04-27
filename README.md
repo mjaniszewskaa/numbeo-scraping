@@ -10,7 +10,7 @@ Three scraping methods are being compared:
 * Scrapy
 * Selenium
 
-There are over $7000$ cities available on the webpage.
+There are over 7000 cities available on the webpage.
 
 ### Disclaimer
 
@@ -37,7 +37,7 @@ It calls sequentially three spiders:
 
 The first gathers the list of all countries present at the website. The second one uses this list to crawl through the pages of these countries and extracts all possible city names. Finally the last one uses this list to crawl through all possible cities and gathers the required data.
 
-By default this will gather the links from the top $100$ countries and attempt to collect price information from the top $100$ cities from the list. One can eliminate this restriction by changing the value of the ``limit`` variable to ``false`` or change the limit size by manipulating the value of the ``max_size`` parameter - both are declared on top of the ``run.py`` script.
+By default this will gather the links from the top 100 countries and attempt to collect price information from the top 100 cities from the list. One can eliminate this restriction by changing the value of the ``limit`` variable to ``false`` or change the limit size by manipulating the value of the ``max_size`` parameter - both are declared on top of the ``run.py`` script.
 
 ## License
 
