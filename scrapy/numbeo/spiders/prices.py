@@ -21,21 +21,25 @@ class PricesSpider(scrapy.Spider):
 
     def parse(self, response):
         xpath = '//html/body/div[2]/table//tr'
-        selection = response.xpath(xpath)
-        loc = response.xpath('//span[@itemprop="name"]/text()')[1:]
-        for row in filter(lambda row: row.xpath('td'), selection):
-            prices = numbeo.items.Prices()
-            prices['Country'], prices['City'] = [l.get().strip() for l in loc]
-            prices['Name'] = row.xpath('td/text()').get().strip()
-            try:
-                xpath = 'td/span/text()'
-                prices['Price'] = row.xpath(xpath).get().strip('$').strip()
-            except:
-                prices['Price'] = 'NaN'
-            for name, bound in zip(['Min', 'Max'], ['Left', 'Right']):
-                xpath = f'td/span[@class="barText{bound}"]/text()'
+        loc_xpath = '//span[@itemprop="name"]/text()'
+        location = [l.get().strip() for l in response.xpath(loc_xpath)[1:]]
+        for row in response.xpath(xpath):
+            if row.xpath('td'):
+                prices = numbeo.items.Prices()
+                prices['Country'], prices['City'] = location
+                prices['Name'] = row.xpath('td/text()').get().strip()
+                prices['Category'] = category
                 try:
-                    prices[name] = row.xpath(xpath).get().strip()
+                    xpath = 'td/span/text()'
+                    prices['Price'] = row.xpath(xpath).get().strip('$').strip()
                 except:
-                    prices[name] = 'NaN'
-            yield prices
+                    prices['Price'] = 'NaN'
+                for name, bound in zip(['Min', 'Max'], ['Left', 'Right']):
+                    xpath = f'td/span[@class="barText{bound}"]/text()'
+                    try:
+                        prices[name] = row.xpath(xpath).get().strip()
+                    except:
+                        prices[name] = 'NaN'
+                yield prices
+            else:
+                category = row.xpath('th/div/text()').get().strip()

@@ -22,6 +22,7 @@ class City(scrapy.Item):
 class Prices(scrapy.Item):
     Country = scrapy.Field()
     City = scrapy.Field()
+    Category = scrapy.Field()
     Name = scrapy.Field()
     Price = scrapy.Field()
     Min = scrapy.Field()

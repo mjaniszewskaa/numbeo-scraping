@@ -27,7 +27,7 @@ def crawl():
         settings['FEED_EXPORT_FIELDS'] = {
             'countries': ['Country'],
             'cities': ['Country', 'City'],
-            'prices': ['Country', 'City', 'Name', 'Price', 'Min', 'Max'],
+            'prices': ['Country', 'City', 'Category', 'Name', 'Price', 'Min', 'Max'],
         }[spider]
         start = time.time()
         yield runner.crawl(spider, limit=limit, max_size=max_size)
