@@ -19,6 +19,7 @@ runner = scrapy.crawler.CrawlerRunner(settings)
 
 @twisted.internet.defer.inlineCallbacks
 def crawl():
+    durations = []
     for spider in ['countries', 'cities', 'prices']:
         with contextlib.suppress(FileNotFoundError):
             os.remove(f'{spider}.{format}')
@@ -28,16 +29,17 @@ def crawl():
             'cities': ['Country', 'City'],
             'prices': ['Country', 'City', 'Name', 'Price', 'Min', 'Max'],
         }[spider]
+        start = time.time()
         yield runner.crawl(spider, limit=limit, max_size=max_size)
+        end = time.time()
+        duration = round(end - start, 2)
+        print(f'Spider {spider} took {duration}s.')
+        durations.append(duration)
+    total_duration = round(sum(durations), 2)
+    print(f'Total elapsed time: {total_duration}s.')
     twisted.internet.reactor.stop()
 
 
 if __name__ == '__main__':
     crawl()
-
-    start = time.time()
     twisted.internet.reactor.run()
-    end = time.time()
-
-    duration = '{:.2f}'.format(end - start)
-    print(f'Elapsed time: {duration}s.')
