@@ -117,4 +117,5 @@ for link in cities_links:
 print(d)
 print('It took', time.time()-start, 'seconds.')
 
-d.to_csv('prices_bs.csv', encoding='utf-8-sig') if export_to_csv else ''
+if export_to_csv:
+    d.to_csv('prices_bs.csv', encoding='utf-8-sig')
