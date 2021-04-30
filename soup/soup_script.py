@@ -11,9 +11,12 @@ import urllib.parse
 import time
 start = time.time()
 
-# If the limit=True then only 100 first cities will be scraped
+# If the limit = True then only 100 first cities will be scraped
 limit = True
 cities_scraped = 100 if limit else float("inf")
+
+# If export = True then the data will be exported to csv file
+export_to_csv = False
 
 ##################### 1. Get names of the country #######################################################
 url = 'https://www.numbeo.com/cost-of-living/'
@@ -70,13 +73,20 @@ for link in cities_links:
     html = request.urlopen(link)
     bs = BS(html.read(), 'html.parser')
 
-    # CITY & COUNTRY
-    tags_1 = bs.find("nav", class_='breadcrumb').find_all('a', class_='breadcrumb_link')
+    ## CITY & COUNTRY
+    b = bs.find("nav", class_='breadcrumb')
 
-    country = tags_1[1].find("span", itemprop='name').get_text()
-    city = tags_1[2].find("span", itemprop='name').get_text()
+    #
+    if not b:
+        print("not found: " + link)
+        continue
 
-    #   NAME & PRICE
+    tags_1 = b.find_all('a', class_='breadcrumb_link')
+
+    country = tags_1[1].get_text().strip() if len(tags_1) > 1 else ""
+    city = tags_1[2].get_text().strip() if len(tags_1) > 2 else ""
+
+    ##  NAME & PRICE
     tags_2 = bs.find('table', class_="data_wide_table new_bar_table").find_all("tr")
 
     for tag in tags_2:
@@ -106,4 +116,5 @@ for link in cities_links:
 
 print(d)
 print('It took', time.time()-start, 'seconds.')
-d.to_csv('prices_bs.csv', encoding='utf-8-sig')
+
+d.to_csv('prices_bs.csv', encoding='utf-8-sig') if export_to_csv else ''
