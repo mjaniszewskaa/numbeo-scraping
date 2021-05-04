@@ -29,6 +29,7 @@ def crawl():
             'cities': ['Country', 'City'],
             'prices': ['Country', 'City', 'Category', 'Name', 'Price', 'Min', 'Max'],
         }[spider]
+        print(f"Running spider '{spider}'...")
         start = time.time()
         yield runner.crawl(spider, limit=limit, max_size=max_size)
         end = time.time()

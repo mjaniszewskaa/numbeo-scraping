@@ -1,4 +1,5 @@
 import csv
+import tqdm
 import scrapy
 import numbeo.items
 
@@ -19,11 +20,28 @@ class PricesSpider(scrapy.Spider):
             self.start_urls = self.start_urls[:max_size]
         super().__init__(**kwargs)
 
+    @classmethod
+    def from_crawler(cls, crawler, *args, **kwargs):
+        spider = super(PricesSpider, cls).from_crawler(crawler, *args, **kwargs)
+        crawler.signals.connect(spider.spider_opened, signal=scrapy.signals.spider_opened)
+        crawler.signals.connect(spider.spider_closed, signal=scrapy.signals.spider_closed)
+        return spider
+
+    def spider_opened(self, spider):
+        self.pbar = tqdm.tqdm(total=len(self.start_urls))
+        with open('/home/bartek/numbeo-scraping/scrapy/log1.txt', 'wt') as f:
+            f.write('Opened.\n')
+
+    def spider_closed(self, spider):
+        self.pbar.close()
+        with open('/home/bartek/numbeo-scraping/scrapy/log2.txt', 'wt') as f:
+            f.write('Closed.\n')
+
     def parse(self, response):
-        xpath = '//html/body/div[2]/table//tr'
+        self.pbar.update(1)
         loc_xpath = '//span[@itemprop="name"]/text()'
         location = [l.get().strip() for l in response.xpath(loc_xpath)[1:]]
-        for row in response.xpath(xpath):
+        for row in response.xpath('//html/body/div[2]/table//tr'):
             if row.xpath('td'):
                 prices = numbeo.items.Prices()
                 prices['Country'], prices['City'] = location
