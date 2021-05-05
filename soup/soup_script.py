@@ -9,6 +9,7 @@ import pandas as pd
 import numpy as np
 import urllib.parse
 import time
+from tqdm import tqdm
 start = time.time()
 
 # If the limit = True then only 100 first cities will be scraped
@@ -49,7 +50,6 @@ for country in country_names:
 
 
         # Extract links for each city
-
         link_temp_list = []
         for city in cities_names:
             params = {'country': country, 'city': city, 'displayCurrency': 'USD'}
@@ -59,26 +59,25 @@ for country in country_names:
             # Limit of cities that will be scraped
             if len(cities_links + link_temp_list) == cities_scraped: break
 
+
         # Limit of cities that will be scraped
         cities_links.extend(link_temp_list)
 
         if len(cities_links) >= cities_scraped: break
 
+
 ##################### 3. Get data for each city #######################################################
 
-index = 1
-for link in cities_links:
-    print(index, link)
-    index += 1
+for link in tqdm(cities_links):
+
     html = request.urlopen(link)
     bs = BS(html.read(), 'html.parser')
 
     ## CITY & COUNTRY
     b = bs.find("nav", class_='breadcrumb')
 
-    #
+    # If links are not available to reach
     if not b:
-        print("not found: " + link)
         continue
 
     tags_1 = b.find_all('a', class_='breadcrumb_link')
@@ -86,8 +85,9 @@ for link in cities_links:
     country = tags_1[1].get_text().strip() if len(tags_1) > 1 else ""
     city = tags_1[2].get_text().strip() if len(tags_1) > 2 else ""
 
-    ##  NAME & PRICE
+    ##  CATEGORY & NAME & PRICE
     tags_2 = bs.find('table', class_="data_wide_table new_bar_table").find_all("tr")
+    category = ''
 
     for tag in tags_2:
         td = tag.find('td')
@@ -102,7 +102,7 @@ for link in cities_links:
         price_tag = tag.find("span", class_="first_currency")
         price = price_tag.text.replace('$', '') if price_tag else np.nan
 
-        # Some prices have '/n' in html code so there is a need to use lstrip()
+        # Some prices have '/n' in html code so there is a need to use strip()
         min_tag = tag.find("span", class_="barTextLeft")
         min_price = min_tag.text.strip() if min_tag else np.nan
 
@@ -113,6 +113,7 @@ for link in cities_links:
         info = {'Country': country, 'City': city, 'Category': category,
                 'Name': name, 'Price': price, 'Min': min_price, 'Max': max_price}
         d = d.append(info, ignore_index=True)
+
 
 print(d)
 print('It took', time.time()-start, 'seconds.')

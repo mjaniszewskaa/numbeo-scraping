@@ -50,6 +50,7 @@ Prerequisites:
     - pandas~=1.0.3
     - numpy~=1.18.2
     - beautifulsoup4~=4.9.3
+    - tqdm~=4.42.0
 
 To run a program use your python interpreter and run a file `soup_script.py` located in **soup** folder. 
 
