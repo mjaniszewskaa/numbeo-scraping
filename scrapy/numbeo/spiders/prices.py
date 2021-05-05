@@ -13,6 +13,12 @@ class PricesSpider(scrapy.Spider):
         self.input = input
         self.limit = limit
         self.max_size = max_size
+        format = input.split('.')[-1]
+        reader = getattr(pandas, f'read_{format}')
+        entries = reader(input)[['Country', 'City']].values
+        self.start_urls = [url.format(*entry) for entry in entries]
+        if self.limit:
+            self.start_urls = self.start_urls[:max_size]
         super().__init__(**kwargs)
 
     @classmethod
@@ -23,12 +29,6 @@ class PricesSpider(scrapy.Spider):
         return spider
 
     def opened(self, spider):
-        format = self.input.split('.')[-1]
-        reader = getattr(pandas, f'read_{format}')
-        entries = reader(self.input)[['Country', 'City']].values
-        self.start_urls = [url.format(*entry) for entry in entries]
-        if self.limit:
-            self.start_urls = self.start_urls[:self.max_size]
         self.progressbar = tqdm.tqdm(total=len(self.start_urls))
 
     def closed(self, spider):
