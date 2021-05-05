@@ -26,13 +26,8 @@ args = parser.parse_args()
 
 settings = scrapy.utils.project.get_project_settings()
 
-pipeline = {
-    'csv': 'numbeo.pipelines.CSVPipeline',
-    'json': 'numbeo.pipelines.JSONPipeline',
-    'xml': 'numbeo.pipelines.XMLPipeline',
-}[args.format]
-
-settings['ITEM_PIPELINES'] = {pipeline: 300}
+pipeline_name =  f'numbeo.pipelines.{args.format.upper()}Pipeline'
+settings['ITEM_PIPELINES'] = {pipeline_name: 300}
 
 scrapy.utils.log.configure_logging({'LOG_LEVEL': 'CRITICAL'})
 
@@ -42,11 +37,12 @@ runner = scrapy.crawler.CrawlerRunner(settings)
 @twisted.internet.defer.inlineCallbacks
 def crawl():
     durations = []
-    for spider in args.spiders:
-        settings['FEEDS'] = {spider: {'format': args.format}}
+    params = {'limit': args.limit, 'max_size': args.max_size}
+    for i, spider in enumerate(args.spiders):
+        params['input'] = f'{args.spiders[i - 1]}.{args.format}'
         print(f"Running spider '{spider}'...")
         start = time.time()
-        yield runner.crawl(spider, limit=args.limit, max_size=args.max_size)
+        yield runner.crawl(spider, **params)
         end = time.time()
         duration = round(end - start, 2)
         print(f'Spider {spider} took {duration}s.')

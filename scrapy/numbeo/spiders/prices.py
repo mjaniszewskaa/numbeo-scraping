@@ -9,7 +9,8 @@ url = 'https://www.numbeo.com/cost-of-living/city_result.jsp?country={}&city={}&
 class PricesSpider(scrapy.Spider):
     name = 'prices'
 
-    def __init__(self, limit=True, max_size=100, **kwargs):
+    def __init__(self, input, limit=True, max_size=100, **kwargs):
+        self.input = input
         self.limit = limit
         self.max_size = max_size
         super().__init__(**kwargs)
@@ -22,13 +23,10 @@ class PricesSpider(scrapy.Spider):
         return spider
 
     def opened(self, spider):
-        format = self.settings['FEEDS'][self.name]['format']
-        try:
-            reader = getattr(pandas, f'read_{format}')
-            entries = reader(f'cities.{format}')[['Country', 'City']].values
-            self.start_urls = [url.format(*entry) for entry in entries]
-        except:
-            self.start_urls = []
+        format = self.input.split('.')[-1]
+        reader = getattr(pandas, f'read_{format}')
+        entries = reader(self.input)[['Country', 'City']].values
+        self.start_urls = [url.format(*entry) for entry in entries]
         if self.limit:
             self.start_urls = self.start_urls[:self.max_size]
         self.progressbar = tqdm.tqdm(total=len(self.start_urls))
