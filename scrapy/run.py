@@ -9,7 +9,7 @@ import scrapy.utils.project
 
 limit = True
 max_size = 100
-format = 'json'
+format = 'csv'
 spiders = ['countries', 'cities', 'prices']
 
 parser = argparse.ArgumentParser(prog='run', description='Numbeo scraper CLI.')
@@ -34,8 +34,6 @@ pipeline = {
 
 settings['ITEM_PIPELINES'] = {pipeline: 300}
 
-settings['FEEDS'] = {spider: {'format': args.format} for spider in args.spiders}
-
 scrapy.utils.log.configure_logging({'LOG_LEVEL': 'CRITICAL'})
 
 runner = scrapy.crawler.CrawlerRunner(settings)
@@ -45,6 +43,7 @@ runner = scrapy.crawler.CrawlerRunner(settings)
 def crawl():
     durations = []
     for spider in args.spiders:
+        settings['FEEDS'] = {spider: {'format': args.format}}
         print(f"Running spider '{spider}'...")
         start = time.time()
         yield runner.crawl(spider, limit=args.limit, max_size=args.max_size)
