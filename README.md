@@ -58,7 +58,7 @@ To run a program use your python interpreter and run a file `soup_script.py` loc
 By default, only 100 first cities will be scraped. 
 To modify limit find the limit variable and change to `False` 
 or change value for `cities_scraped = 100` variable.  
-Additionally, you can export it to `prices_bs.csv` file by changing `export` variable to `True`.
+Note: data will be exported to `prices_bs.csv` csv file. To change it change `export_to_csv` variable to `False`. 
 
 The script is divided in 3 parts: 
 

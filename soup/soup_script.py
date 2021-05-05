@@ -14,10 +14,10 @@ start = time.time()
 
 # If the limit = True then only 100 first cities will be scraped
 limit = True
-cities_scraped = 100 if limit else float("inf")
+cities_scraped = 100 if limit else float('inf')
 
 # If export = True then the data will be exported to csv file
-export_to_csv = False
+export_to_csv = True
 
 ##################### 1. Get names of the country #######################################################
 url = 'https://www.numbeo.com/cost-of-living/'
@@ -25,13 +25,13 @@ html = request.urlopen(url)
 bs = BS(html.read(), 'html.parser')
 
 # Countries from dropdown list
-tags = bs.find('select', id="country").find_all("option")
-country_names = [tag["value"] for tag in tags]
+tags = bs.find('select', id='country').find_all('option')
+country_names = [tag['value'] for tag in tags]
 country_names.remove(country_names[0])  # remove 1 element with value: ---Select country---
 
 
 ##################### 2. Extract links to cities in each country ########################################
-d = pd.DataFrame({'Country': [], 'City': [], 'Category': [], 'Name': [], 'Price': [], "Min": [], 'Max': []})
+d = pd.DataFrame({'Country': [], 'City': [], 'Category': [], 'Name': [], 'Price': [], 'Min': [], 'Max': []})
 
 cities_links = []
 for country in country_names:
@@ -44,8 +44,8 @@ for country in country_names:
         bs = BS(html.read(), 'html.parser')
 
         # Countries from dropdown list
-        tags = bs.find('select', id="city").find_all("option")
-        cities_names = [tag["value"] for tag in tags]
+        tags = bs.find('select', id='city').find_all('option')
+        cities_names = [tag['value'] for tag in tags]
         cities_names.remove(cities_names[0])  # remove 1 element with value: ---Select country---
 
 
@@ -74,7 +74,7 @@ for link in tqdm(cities_links):
     bs = BS(html.read(), 'html.parser')
 
     ## CITY & COUNTRY
-    b = bs.find("nav", class_='breadcrumb')
+    b = bs.find('nav', class_='breadcrumb')
 
     # If links are not available to reach
     if not b:
@@ -82,11 +82,11 @@ for link in tqdm(cities_links):
 
     tags_1 = b.find_all('a', class_='breadcrumb_link')
 
-    country = tags_1[1].get_text().strip() if len(tags_1) > 1 else ""
-    city = tags_1[2].get_text().strip() if len(tags_1) > 2 else ""
+    country = tags_1[1].get_text().strip() if len(tags_1) > 1 else ''
+    city = tags_1[2].get_text().strip() if len(tags_1) > 2 else ''
 
     ##  CATEGORY & NAME & PRICE
-    tags_2 = bs.find('table', class_="data_wide_table new_bar_table").find_all("tr")
+    tags_2 = bs.find('table', class_='data_wide_table new_bar_table').find_all('tr')
     category = ''
 
     for tag in tags_2:
@@ -99,14 +99,14 @@ for link in tqdm(cities_links):
             continue
 
         # Prices are in USD so we cut the $ symbol
-        price_tag = tag.find("span", class_="first_currency")
+        price_tag = tag.find('span', class_='first_currency')
         price = price_tag.text.replace('$', '') if price_tag else np.nan
 
         # Some prices have '/n' in html code so there is a need to use strip()
-        min_tag = tag.find("span", class_="barTextLeft")
+        min_tag = tag.find('span', class_='barTextLeft')
         min_price = min_tag.text.strip() if min_tag else np.nan
 
-        max_tag = tag.find("span", class_="barTextRight")
+        max_tag = tag.find('span', class_='barTextRight')
         max_price = max_tag.text.strip() if max_tag else np.nan
 
         # Combine all info and add to dataframe
