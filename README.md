@@ -71,6 +71,42 @@ The script is divided in 3 parts:
 After it's done there will be a data frame `d` with the data and will be exported to `.csv` depending on your decision. 
 
 
+
+### Selenium
+
+Prerequisites:
+
+* Python 3.6 or later
+* Firefox and GeckoDriver on the PATH.
+* Libraries installed:  
+    - pandas~=1.0.3
+    - numpy~=1.18.2
+    - selenium~=3.141.0
+
+The file `costs_selenium.py` is responsible for selenium web scraping, and is located in selenium folder.
+Before running the code, make sure that GeckoDriver is on the PATH for code to work. In case it is undesired, please add GeckoDriver path location while defining webdriver options in the following way:
+
+```
+gecko_path = 'path/to/geckodriver' # here add your webdriver path
+
+url = 'https://www.numbeo.com/cost-of-living/'
+options = webdriver.firefox.options.Options()
+options.headless = True
+driver = webdriver.Firefox(options = options, executable_path = gecko_path) # geckodriver executable path is defined
+```
+
+Code structue:
+
+1. Define your webdriver options.
+2. Choose if number of links scraped should be limited. By default, variable `limited` is set to **True**, and program will only scrape 100 links. To scrape all data, set variable `limited` to False. To change the limit, set variable `upper_limit` to the required value.
+3. Gather links to all countries from homepage.
+4. Get to each country page and extraxt city names from the dropdown list.
+5. Use GET request to be redirected to each city page, and scrape all data regarding prices there.
+6. Put all data into collective dataframe, which will be extracted to .csv file at the very end.
+
+**Disclaimer**: In order to improve tracking the webscraping progress, progress bars were added for cities scraped in each country.
+
+
 ## License
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
