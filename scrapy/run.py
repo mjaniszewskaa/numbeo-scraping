@@ -18,7 +18,7 @@ parser.add_argument('-l', '--limit', action='store_true', dest='limit')
 parser.add_argument('-n', '--no-limit', action='store_false', dest='limit')
 parser.add_argument('-m', '--max-size', default=max_size, type=int)
 parser.add_argument('-f', '--format', default=format, type=str)
-parser.add_argument('-s', '--spiders', nargs='+', default=spiders, type=str)
+parser.add_argument('-s', '--spiders', default=3, type=int)
 
 parser.set_defaults(limit=limit)
 
@@ -38,8 +38,8 @@ runner = scrapy.crawler.CrawlerRunner(settings)
 def crawl():
     durations = []
     params = {'limit': args.limit, 'max_size': args.max_size}
-    for i, spider in enumerate(args.spiders):
-        params['input'] = f'{args.spiders[i - 1]}.{args.format}'
+    for i, spider in enumerate(spiders[:args.spiders]):
+        params['input'] = f'{spiders[i - 1]}.{args.format}'
         print(f"Running spider '{spider}'...")
         start = time.time()
         yield runner.crawl(spider, **params)
