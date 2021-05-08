@@ -23,10 +23,10 @@ class PricesSpider(scrapy.Spider):
 
     @classmethod
     def from_crawler(cls, crawler, *args, **kwargs):
-        spider = super(PricesSpider, cls).from_crawler(crawler, *args, **kwargs)
-        crawler.signals.connect(spider.opened, scrapy.signals.spider_opened)
-        crawler.signals.connect(spider.closed, scrapy.signals.spider_closed)
-        return spider
+        spdr = super(PricesSpider, cls).from_crawler(crawler, *args, **kwargs)
+        crawler.signals.connect(spdr.opened, scrapy.signals.spider_opened)
+        crawler.signals.connect(spdr.closed, scrapy.signals.spider_closed)
+        return spdr
 
     def opened(self, spider):
         self.progressbar = tqdm.tqdm(total=len(self.start_urls))

@@ -1,6 +1,7 @@
 import scrapy
 import scrapy.exporters
 
+
 class Pipeline:
 
     format = None
