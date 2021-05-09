@@ -23,7 +23,10 @@ Project was created only for educational purposes.
 Prerequisites:
 
 * Python 3.6 or later
-* Scrapy
+* Libraries installed:  
+    - pandas~=1.0.3
+    - numpy~=1.18.2
+    - tqdm~=4.42.0
 
 Just navigate to the scrapy folder and run the command:
 
@@ -37,8 +40,19 @@ It calls sequentially three spiders:
 
 The first gathers the list of all countries present at the website. The second one uses this list to crawl through the pages of these countries and extracts all possible city names. Finally the last one uses this list to crawl through all possible cities and gathers the required data.
 
-By default this will gather the links from the top 100 countries and attempt to collect price information from the top 100 cities from the list. One can eliminate this restriction by changing the value of the ``limit`` variable to ``false`` or change the limit size by manipulating the value of the ``max_size`` parameter - both are declared on top of the ``run.py`` script.
+By default this will gather the links from the top 100 countries and attempt to collect price information from the top 100 cities from the list. One can eliminate this restriction by changing the value of the ``limit`` variable to ``false`` or change the limit size by manipulating the value of the ``max_size`` parameter - both are declared together with the format variable on top of the ``run.py`` script.
 
+They can also be changed using the provided command line interface. Running the script without any arguments is equivalent to:
+
+``python3 run.py --limit --max-size 100 --format csv --spiders 3``
+
+Using ``--no-limit`` instead will result in scraping all possible pages. The value of the ``--format`` argument can be any of ``csv``, ``json`` or ``xml``. However, the script uses pandas methods to parse the input files. In particular, xml format is read via ``pandas.read_xml`` method which is introduced in version 1.3.0 which is (as of May 2021) in the beta stages of development. The ``--spiders`` variable controls how many spiders will be run - if a value 1 is selected only ``countries`` spider will be launched. For 2 all but the last spider will be run.
+
+It is also possible to run the three scrapers directly. The user however must specify the ``input`` argument for the latter two:
+
+``scrapy crawl countries -o countries.csv``
+``scrapy crawl cities -a input=countries.csv -o cities.csv``
+``scrapy crawl prices -a input=cities.csv -o prices.csv``
 
 
 ### Beautiful Soup
