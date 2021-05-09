@@ -51,7 +51,9 @@ Using ``--no-limit`` instead will result in scraping all possible pages. The val
 It is also possible to run the three scrapers directly. The user however must specify the ``input`` argument for the latter two:
 
 ``scrapy crawl countries -o countries.csv``
+
 ``scrapy crawl cities -a input=countries.csv -o cities.csv``
+
 ``scrapy crawl prices -a input=cities.csv -o prices.csv``
 
 
