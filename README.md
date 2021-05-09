@@ -98,6 +98,7 @@ Prerequisites:
     - pandas~=1.0.3
     - numpy~=1.18.2
     - selenium~=3.141.0
+    - tqdm~=4.42.0
 
 The file `costs_selenium.py` is responsible for selenium web scraping, and is located in selenium folder.
 Before running the code, make sure that GeckoDriver is on the PATH for code to work. In case it is undesired, please add GeckoDriver path location while defining webdriver options in the following way:
