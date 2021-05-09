@@ -48,7 +48,6 @@ for country in country_names:
         cities_names = [tag['value'] for tag in tags]
         cities_names.remove(cities_names[0])  # remove 1 element with value: ---Select country---
 
-
         # Extract links for each city
         link_temp_list = []
         for city in cities_names:
